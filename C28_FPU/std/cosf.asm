@@ -29,7 +29,7 @@
 _cosf:	; R0H = Radian (on entry)
 	MOVF32		R1H,#81.4873309			; R1H = 512/(2*pi) = 512/6.28318531 = 81.4873309
 	MPYF32		R0H, R0H, R1H	 		; R0H = Radian * 512/(2*pi)
-	MOVIZ		R2H,#0.012271846644531	; R2H = (2*pi)/512 = 0.012271846644531
+	MOVF32		R2H,#0.012271846644531	; R2H = (2*pi)/512 = 0.012271846644531
 	F32TOI32  	R1H, R0H	  			; R1H = int(Radian * 512/(2*pi))
 	MOVL		XAR6,#_FPUsinTable
 	MOVL	 	XAR7,#_FPUcosTable
@@ -38,7 +38,7 @@ _cosf:	; R0H = Radian (on entry)
 	LSL	  		AL,#1
 	MOVZ	 	AR0,@AL					; AR0 = Index into "sin/cos" table = k
 	FRACF32   	R0H, R0H	  			; R0H = fract(Radian*512/(2*pi))
-	MOVIZ		R3H,#0.166667			; R3H = 0.166667 (0x3E2AAAAB)
+	MOVF32		R3H,#0.166667			; R3H = 0.166667 (0x3E2AAAAB)
 	MPYF32		R2H, R0H, R2H	 		; R2H = x = fract(Radian*512/(2*pi)) * (2*pi)/512
 	|| MOV32	R1H,*+XAR6[AR0]			; R1H = S(k)
 	MPYF32		R3H, R3H, R1H	 		; R3H = .166*C(k)
