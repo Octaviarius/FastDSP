@@ -5,14 +5,14 @@ It's started!
 
 
 
-**************** Functions naming ****************
+## Functions naming 
  
 	function_name_{C,Q}[F,D][S,V,M,T](args...)
 	C,c,Q,q - complex, complex-conjugated, quaternion, quaternion-conjugated
 	F,D - float, double
 	S,V,M,T - scalar, vector, matrix, tensor
  
-**************** Arguments naming ****************
+## Arguments naming 
   
 	{o,i,l,r,c}[s,v,m,t]
 	o,l,r,c - output, left-side, right-side, constant
@@ -20,7 +20,7 @@ It's started!
 	c - constant
 	n - size of dimensions (maybe a vector)
 
-**************** Lina (linear algebra) ****************
+## Lina (linear algebra) 
 
 	add - addition
 	sub - substraction
@@ -36,25 +36,25 @@ It's started!
 	generate - generate any structure, such as unity matrix or null-vector
  	
 	
-**************** Filter ****************
+## Filter 
 
 	FIR - finit impulse response filter
 	IIR - infinit impulse response filter
-	median - median filtering (may be go one step)
-todo:	kalman - kalman filtering 
+	median - median filtering
+	kalman - kalman filtering (comming soon...) 
 	
-**************** Extmath ****************
+## Extmath 
 	
 	Extended math operations
 	
 	
-**************** Statistic ****************
+## Statistic 
 	
 	regression
 	statsignal
 	
 	
-**************** Spectrum ****************
+## Spectrum 
 	
 	fft
 	window
