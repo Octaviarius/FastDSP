@@ -37,9 +37,8 @@
 #include "spectrum_window.h"
 
 #include "statistic_statsignal_F.h"
-#include "statistic_regression_F.h"
-
 #include "interpolation_envelope.h"
+#include "statistic_regonfly_F.h"
 
 
 

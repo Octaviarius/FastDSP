@@ -28,6 +28,7 @@ typedef struct {
 
 
 
+
 EXTERN void statsignal_init_F(statsignal_f_t *stat);
 
 //! Statistic signal, calc mean and other central momentums

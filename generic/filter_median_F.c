@@ -34,6 +34,7 @@ EXTERN float32 median_process_FS(median_f_t *median, float32 is, count_t quantil
 
 	median->input = is;
 
+	// handling circled buffer
 	if(median->cb_index <= 0){
 		last_idx = median->cb_index = size-1;
 	}else{

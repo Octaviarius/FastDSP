@@ -42,6 +42,8 @@
 
 	.global _conv_circle_FV
 
+	.global _horner_FV
+
 	.global _traverse_FV
 	.global _traverse_FV_FV
 
@@ -1410,22 +1412,21 @@ loop_conv_circle_FV:
 ;8 + 7*N  cycles
 	.sect .text
 _horner_FV:
-	MOV			AR0, AL
-	SUBB		XAR0, #2			; coeffs count >= 2, and in this case will 1 iteration
+	MOVZ		AR0, AL
+	SUBB		XAR0, #2
 
 	MOV			AH, #0
 	LSL			ACC, 1
 	ADDL		ACC, XAR4
 	MOVL		XAR4, ACC
 	
-	MOV32		R2H, *--XAR4			; load y = a[n]
+	MOV32		R1H, R0H
+	MOV32		R0H, *--XAR4			; load y = a[i]
 loop_horner_FV:
-	MPYF32		R2H, R0H, R2H			; y = x * y
-	MOV32		R1H, *--XAR4			; load a[n-1]
-	ADDF32		R2H, R2H, R1H			; y = y + a[n-1]
+	MPYF32		R0H, R0H, R1H			; y = x * y
+	MOV32		R2H, *--XAR4			; load a[i-1]
+	ADDF32		R0H, R0H, R2H			; y = y + a[i-1]
 	BANZ		loop_horner_FV, AR0--
-
-	SWAPF		R0H, R2H
 	
 	LRETR
 
