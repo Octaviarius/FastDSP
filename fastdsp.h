@@ -32,6 +32,8 @@
 #include "filter_iir_CF.h"
 #include "filter_median_F.h"
 
+#include "sampling_F.h"
+
 #include "spectrum_fft_CF.h"
 #include "spectrum_peaks.h"
 #include "spectrum_window.h"
