@@ -11,20 +11,20 @@ namespace filter {
 
 
 
-//! FIR structure
+//! FIR filter structure
 typedef struct {
     cfloat          *weights;   //!< Weights
     cfloat          *buffer;    //!< Circular buffer
-    count_t         cb_index;   //!< Circular index
+    count_t         cb_index;   //!< Circular index of buffer 
     count_t         size;       //!< Weights and buffer sizes
-    cfloat          input;      //!< Input value
-    cfloat          output;     //!< Output filtered value
+    cfloat          input;      //!< Current input value
+    cfloat          output;     //!< Current output value
 } fir_cf_t;
 
 
 
 
-EXTERN void fir_init_CF(
+EXTERN int fir_init_CF(
         fir_cf_t *fir,
         cfloat *weights,
         cfloat *buffer,
@@ -32,11 +32,15 @@ EXTERN void fir_init_CF(
 );
 
 
+EXTERN cfloat fir_process_CF(
+        fir_cf_t *fir,
+		cfloat input
+);
 
 
 
 #ifdef __cplusplus
-};	//namespace filter
-};	//namespace fastdsp
+}	//namespace filter
+}	//namespace fastdsp
 #endif
 

@@ -28,7 +28,12 @@ typedef struct {
 
 
 //! Median filter init
-EXTERN void median_init_F(median_f_t *median);
+EXTERN int median_init_F(
+        median_f_t *median,
+        float32 *buffer,
+        count_t *idx_buffer,
+        count_t size
+);
 
 //! Median filter
 EXTERN float32 median_process_FS(median_f_t *median, float32 is, count_t quantile);

@@ -17,20 +17,28 @@ typedef struct {
     cfloat          *weights_b;     //!< FIR coefficients
     cfloat          *buffer;        //!< Circular buffer
     count_t         cb_index;       //!< Circular buffer index
-    count_t         size_a;         //!< Recursive weights count
+    count_t         size;       	//!< Circular buffer size. Size = max(size_a, size_b)
+    count_t         size_a;         //!< Recursive weights count. Must size_a <= size_b
     count_t         size_b;         //!< FIR weghts count. Count same as circular buffer elements count
     cfloat          input;          //!< Input value
     cfloat          output;         //!< Output filtred value
 } iir_cf_t;
 
 
-EXTERN void iir_init_CF(
+EXTERN int iir_init_CF(
         iir_cf_t *iir,
         cfloat *weights_a,
         cfloat *weights_b,
         cfloat *buffer,
         count_t size_a,
         count_t size_b
+);
+
+
+
+EXTERN cfloat iir_process_CF(
+        iir_cf_t *iir,
+		cfloat input
 );
 
 

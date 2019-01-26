@@ -117,10 +117,10 @@ I7         .set 14H
 ; _FPU_CFFTF32vars1Stages1and2andBitReverse_casm();
 ; _FPU_CFFTF32vars1Stages3Up();
 ;
-        .global      _fft_transform_CF
+        .global      _fft_transform_CF_helper
         .sect       .text
 
-_fft_transform_CF:
+_fft_transform_CF_helper:
 
 	    PUSH       XAR0
 	    

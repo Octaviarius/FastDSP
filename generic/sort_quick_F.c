@@ -1,4 +1,4 @@
-#include <fastDSP/sort_quick_F.h>
+#include "../sort_quick_F.h"
 #include "../linav_F.h"
 
 

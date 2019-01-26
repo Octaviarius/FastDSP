@@ -21,6 +21,16 @@ typedef struct {
 	count_t	FFTSize;       		//!< Size of the FFT (number of complex data points)
 }fft_cf_t;
 
+/*! \brief Generate twiddle factors for the Complex FFT
+ * \param cfft Pointer to the CFFT_F32 object
+ * \attention This function is written in C and compiled without optimization turned on.
+*/
+EXTERN int fft_init_CF(
+        fft_cf_t * cfft,
+        float32 *twiddles,
+        count_t stages
+);
+
 
 
 //! \brief Complex Fast Fourier Transform (Unaligned).
@@ -37,16 +47,18 @@ typedef struct {
 //! buffer need not be aligned to any boundary.
 //! -# If alignment is possible the user can use the faster routine, CFFT_f32
 //! \warning This function is not re-entrant as it uses global variables to store certain parameters
-EXTERN void fft_transform_CF(fft_cf_t * cfft);
+EXTERN cfloat *fft_transform_CF(
+        fft_cf_t *cfft,
+        cfloat *in_buffer,
+        cfloat *aux_buffer
+);
 
 //! Inverse transform
-EXTERN void fft_itransform_CF(fft_cf_t *cfft);
-
-//! \brief Generate twiddle factors for the Complex FFT
-//!
-//! \param cfft Pointer to the CFFT_F32 object
-//! \attention This function is written in C and compiled without optimization turned on.
-EXTERN void fft_init_CF(fft_cf_t * cfft);
+EXTERN cfloat *fft_itransform_CF(
+        fft_cf_t *cfft,
+        cfloat *in_buffer,
+        cfloat *aux_buffer
+);
 
 
 

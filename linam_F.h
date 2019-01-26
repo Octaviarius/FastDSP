@@ -135,13 +135,13 @@ EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n[2]);
 EXTERN void antisymmetrify_FM(float32 *om, float32 *im, count_t n[2]);
 
 //! Diagonalization om[i,i] = (i != j) 0 : im[i,j]
-EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n[2]);
+EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n);
 
 
 
 #ifdef __cplusplus
-};	//namespace lina
-};	//namespace fastdsp
+}	//namespace lina
+}	//namespace fastdsp
 #endif
 
 

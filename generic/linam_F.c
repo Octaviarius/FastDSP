@@ -208,7 +208,8 @@ EXTERN float32 track_FM(float32 *im, count_t n){
 
 EXTERN float32 det_FM(float32 *im, count_t n){
 	count_t i,j,k;
-	float32 result, mult_value;
+    float32 result = 0.0;
+    float32 mult_value;
 	
 	for(i=0; i<n; i++){
 		mult_value = 1.0;
@@ -293,15 +294,67 @@ EXTERN void normalize_FM(float32 *om, float32 *im, count_t n){
 
 
 EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n[2]){
+    count_t i,j,ii,jj;
 
+    for(i=0; i<n[0]; i++){
+        for(j=i; j<n[1]; j++){
+            ii = j + n[1] * i;
+            jj = i + n[1] * j;
+            float32 tmp = 0.5 * (im[ii] + im[jj]);
+            om[ii] = tmp;
+            om[jj] = tmp;
+        }
+    }
 };
 
 EXTERN void antisymmetrify_FM(float32 *om, float32 *im, count_t n[2]){
+    count_t i,j,ii,jj;
 
+    for(i=0; i<n[0]; i++){
+        for(j=i; j<n[1]; j++){
+            ii = j + n[1] * i;
+            jj = i + n[1] * j;
+            float32 tmp = 0.5 * (im[ii] - im[jj]);
+            om[ii] = tmp;
+            om[jj] = tmp;
+        }
+    }
 };
 
 
-EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n[2]){
+EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n){
+    float32 coeff;
+    float32 *str1, *str_base, *str2;
+    if(om != im)
+        memcpy(om, im, sizeof(*im) * n * n);
+
+    count_t i,j,k;
+
+    // left-side diagonalization
+    for(i=0; i<n; i++){
+        str_base = &om[i * (n + 1)];  // pointer to base row
+
+        //for each row
+        for(j=i+1; j<n; j++){
+            str1 = str_base;
+            str2 = &om[j * n + i];      // pointer to relative row
+            coeff = *str2 / *str1;          // calc relate coefficient
+
+            //for each column of the row
+            *(str2++) = 0.0;
+            for(k=i+1; k<n; k++)
+                *(str2++) -= *(str1++) * coeff;
+        }//for j
+    }//for i
+
+    // right-side diagonalization
+    // all values, which not lay in diagonal will be assigned to zero
+    for(i=0; i<n-1; i++){
+        str_base = &om[i * n + i + 1];  // pointer to base row
+        for(j=n-1; j>i; j--){
+            *(str_base++) = 0.0;
+        }
+    }//for i
 
 };
 

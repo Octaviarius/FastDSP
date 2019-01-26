@@ -1,10 +1,11 @@
 #include "../statistic_regonfly_F.h"
 #include "../ext_math.h"
 #include "../linav_F.h"
-
+#include <string.h>
 
 
 #ifdef __cplusplus
+using namespace std;
 namespace fastdsp {
 namespace statistic {
 #endif
@@ -160,6 +161,6 @@ EXTERN void regonfly_poly2_process_F(
 
 
 #ifdef __cplusplus
-};  //namespace statistic
-};  //namespace fastdsp
+}  //namespace statistic
+}  //namespace fastdsp
 #endif

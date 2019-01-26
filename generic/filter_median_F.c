@@ -14,13 +14,22 @@ namespace filter {	//namespace filter
 
 
 
-EXTERN void median_init_F(median_f_t *median){
-	for(int i=0; i<median->size; i++){
-		median->buffer[i] = 0.0;
-		median->idx_buffer[i] = i;
+EXTERN int median_init_F(
+        median_f_t *median,
+        float32 *buffer,
+        count_t *idx_buffer,
+        count_t size
+){
+    median->buffer = buffer;
+    median->idx_buffer = idx_buffer;
+    for(count_t i=0; i<size; i++){
+        buffer[i] = 0.0;
+        idx_buffer[i] = i;
 	}
 	median->input = median->output = 0;
 	median->cb_index = 0;
+
+    return 0;
 }
 
 
@@ -29,33 +38,32 @@ EXTERN float32 median_process_FS(median_f_t *median, float32 is, count_t quantil
 	count_t *idx = median->idx_buffer;
 	float32 *buff = median->buffer;
 	count_t size = median->size;
-	count_t last_idx;
-	icount_t i;
+    count_t cidx = median->cb_index;
+    count_t i;
 
 	median->input = is;
 
 	// handling circled buffer
-	if(median->cb_index <= 0){
-		last_idx = median->cb_index = size-1;
-	}else{
-		last_idx = --median->cb_index;
-	}
-	buff[last_idx] = is;
+    if(cidx == 0)
+        cidx = size - 1;
+    else
+        cidx--;
+    median->cb_index = cidx;
 
+    buff[cidx] = is;
 
 	idx = median->idx_buffer;
 	for(i=0; i<size; i++){
-		if(*(idx++) == last_idx){
-			last_idx = i;
+        if(*(idx++) == cidx){
+            cidx = i;
 			break;
 		}
 	}
 
-
 	idx = median->idx_buffer;
 	count_t maxidx = 0;
 
-	for(i=0; i<last_idx; i++){
+    for(i=0; i<cidx; i++){
 		if(buff[*(idx++)] > is){
 			goto __found_max;
 		}
@@ -79,30 +87,29 @@ __found_max:
 
 
 	count_t tmp_ui16;
-	if(maxidx < last_idx){
+    if(maxidx < cidx){
 
-		idx = median->idx_buffer + last_idx;
+        idx = median->idx_buffer + cidx;
 		tmp_ui16 = *idx;
-		for(i=last_idx-maxidx; i>0; i--){
+        for(i=cidx-maxidx; i>0; i--){
 			idx[0] = idx[-1];
 			idx--;
 		}
 
 		*idx = tmp_ui16;
 
-	}else if(maxidx > last_idx){
+    }else if(maxidx > cidx){
 
-		idx = median->idx_buffer + last_idx;
+        idx = median->idx_buffer + cidx;
 		tmp_ui16 = *idx;
 
-		for(i=maxidx-last_idx; i>0; i--){
+        for(i=maxidx-cidx; i>0; i--){
 			idx[0] = idx[1];
 			idx++;
 		}
 
 		*idx = tmp_ui16;
 	}
-
 
 	return median->output = buff[median->idx_buffer[quantile]];
 
