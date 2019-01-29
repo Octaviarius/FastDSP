@@ -93,6 +93,10 @@ EXTERN float32 mean3_FV(float32 *iv, count_t n);
 //! Circle convolution
 EXTERN void conv_circle_FV(float32 *ov, float32 *iv, float32 *kern, count_t n, count_t kern_size);
 
+//! Circle shift
+EXTERN void circ_shift_FV(float32 *ov, float32 *iv, count_t n, count_t shift);
+
+//! Horner polynom representation
 EXTERN float32 horner_FV(float32 ic, float32 *iv, count_t n);
 
 EXTERN void traverse_FV(float32 *ov, float32 *iv, count_t n, pfunc_f_t func);

@@ -409,6 +409,37 @@ EXTERN void conv_circle_CFV(cfloat *ov, cfloat *iv, cfloat *kern, count_t n, cou
 
 
 
+
+EXTERN void circ_shift_CFV(cfloat *ov, cfloat *iv, count_t n, count_t shift){
+    if(ov == iv){
+        cfloat  *lptr = iv,
+                *rptr = iv,
+                *last = &iv[n - 1];
+
+        cfloat lval, rval;
+
+        lval = *lptr;
+        for(count_t i=n; i>0; i--){
+            if(++rptr > last)
+                rptr -= n;
+
+            rval = *rptr;
+            *rptr = lval;
+            lval = rval;
+
+            lptr = rptr;
+        }
+
+
+    }else{
+        memcpy(ov + shift, iv, sizeof(*ov)*(n - shift));
+        memcpy(ov, iv + (n - shift), sizeof(*ov)*shift);
+    }
+}
+
+
+
+
 EXTERN void traverse_CFV(cfloat *ov, cfloat *iv, count_t n, pfunc_cf_t func){
 	while(n-->0)
 		*(ov++) = func(*(iv++));

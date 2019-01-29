@@ -166,29 +166,30 @@ EXTERN void mmul_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t n[2]){
 
 EXTERN void mmul_FM_FV(float32 *ov, float32 *lm, float32 *rv, count_t n[2]){
 	count_t i,j;
-	memset(ov, 0, n[1]*sizeof(*ov));
 	for(i=0; i<n[0]; i++){
+	    ov[i] = 0.0;
 		for(j=0; j<n[1]; j++){
 			ov[i] += lm[i*n[1]+j] * rv[j];
 		};
 	};
 };
 
-EXTERN void mmul_FV_FM(float32 *ov, float32 *lm, float32 *rv, count_t n[2]){
+EXTERN void mmul_FV_FM(float32 *ov, float32 *lv, float32 *rm, count_t n[2]){
 	count_t i,j;
 	memset(ov, 0, n[1]*sizeof(*ov));
-	for(j=0; j<n[1]; j++){
-		for(i=0; i<n[0]; i++){
-			ov[i] += lm[i*n[1]+j] * rv[i];
+	for(i=0; i<n[1]; i++){
+	    ov[i] = 0.0;
+	    for(j=0; j<n[0]; j++){
+			ov[i] += rm[j*n[1]+i] * lv[j];
 		};
 	};
 };
 
-EXTERN void tmul_FV_FM(float32 *ov, float32 *lm, float32 *rv, count_t n[2]){
+EXTERN void tmul_FV_FV(float32 *om, float32 *lv, float32 *rv, count_t n[2]){
 	count_t i,j;
 	for(i=0; i<n[0]; i++){
 		for(j=0; j<n[1]; j++){
-			ov[i*n[1]+j] += lm[i] * rv[j];
+			om[i*n[1]+j] += lv[i] * rv[j];
 		}		
 	}
 };
@@ -196,41 +197,77 @@ EXTERN void tmul_FV_FM(float32 *ov, float32 *lm, float32 *rv, count_t n[2]){
 
 EXTERN float32 track_FM(float32 *im, count_t n){
 	float32 result = 0.0;
-	count_t i, cnt = n;
+	count_t cnt = n;
 	
 	while(cnt-->0){
-		result += im[i];
-		i += n+1;
+	    im += n + 1;
+		result += *im;
 	}
 	return result;
 };
 
 
-EXTERN float32 det_FM(float32 *im, count_t n){
-	count_t i,j,k;
-    float32 result = 0.0;
-    float32 mult_value;
-	
-	for(i=0; i<n; i++){
-		mult_value = 1.0;
-		k = i;
-		for(j=0; j<n; j++){			
-			if(k > n)
-				k = 0;
-			mult_value *= im[j*n+k];
-			k++;
-		}	
-		result += mult_value;
-	}
-	return result;
+EXTERN float32 det_FM(float32 *im, float32 *aux_mat, count_t n){
+    if(aux_mat != NULL){
+        if(aux_mat != im)
+            memcpy(aux_mat, im, n * n * sizeof(*im));
+    }else
+        aux_mat = im;
+
+    // triangulate by Gauss method
+    float32 coeff;
+    float32 det = 1.0;
+    float32 *str1, *str_base, *str2;
+    count_t i,j,k;
+
+    str_base = aux_mat;
+
+    for(i=0; i<n; i++){
+
+        // find row which i-col not equal 0.0
+        if( (*str_base) == 0.0){
+            str1 = str_base + n;
+            for(j=i+1; j<n; j++){
+                // find not-zero head and exchange rows
+                if( (*str1) != 0.0){
+                    str2 = str_base;
+                    for(k=i; k<n; k++){
+                        coeff = *str1;
+                        *(str1++) = *str2;
+                        *(str2++) = coeff;
+                    }
+                    break;
+                }
+                str1 += n;
+            }
+        }
+
+        det *= (*str_base);
+        //for each row
+        for(j=i+1; j<n; j++){
+            str1 = str_base;
+            str2 = &aux_mat[j * n + i];     // pointer to relative row
+            coeff = *str2 / *str1;          // calc relate coefficient
+
+            //for each column of the row
+            *(str2++) = 0.0;
+            for(k=i+1; k<n; k++)
+                *(str2++) -= *(str1++) * coeff;
+        }//for j
+
+        str_base += n + 1;  // update pointer to base row
+
+    }//for i
+
+    return det;
 };
 
 
-EXTERN float32 det2_FM(mat2_f_t *im, count_t n){
+EXTERN float32 det2_FM(mat2_f_t *im){
 	return im->m00 * im->m11 - im->m01 * im->m10;
 }
 
-EXTERN float32 det3_FM(mat3_f_t *im, count_t n){
+EXTERN float32 det3_FM(mat3_f_t *im){
 	return 	im->m00 * im->m11 * im->m22 +
 			im->m01 * im->m12 * im->m20 +
 			im->m02 * im->m10 * im->m21 -
@@ -238,32 +275,6 @@ EXTERN float32 det3_FM(mat3_f_t *im, count_t n){
 			im->m02 * im->m11 * im->m20 -
 			im->m01 * im->m10 * im->m22 -
 			im->m00 * im->m12 * im->m21;
-}
-
-EXTERN float32 det4_FM(mat4_f_t *im, count_t n){
-	return 	im->m00 * im->m11 * im->m22 * im->m33 +
-			im->m01 * im->m12 * im->m23 * im->m30 +
-			im->m02 * im->m13 * im->m20 * im->m31 +
-			im->m03 * im->m10 * im->m21 * im->m32 -
-
-			im->m03 * im->m12 * im->m21 * im->m30 -
-			im->m02 * im->m11 * im->m20 * im->m33 -
-			im->m01 * im->m10 * im->m23 * im->m32 -
-			im->m00 * im->m13 * im->m22 * im->m31;
-}
-
-EXTERN float32 det5_FM(mat5_f_t *im, count_t n){
-	return 	im->m00 * im->m11 * im->m22 * im->m33 * im->m44 +
-			im->m01 * im->m12 * im->m23 * im->m34 * im->m40 +
-			im->m02 * im->m13 * im->m24 * im->m30 * im->m41 +
-			im->m03 * im->m14 * im->m20 * im->m31 * im->m42 +
-			im->m04 * im->m10 * im->m21 * im->m32 * im->m43 -
-
-			im->m04 * im->m13 * im->m22 * im->m31 * im->m40 -
-			im->m03 * im->m12 * im->m21 * im->m30 * im->m44 -
-			im->m02 * im->m11 * im->m20 * im->m34 * im->m43 -
-			im->m01 * im->m10 * im->m24 * im->m33 * im->m42 -
-			im->m00 * im->m14 * im->m23 * im->m32 * im->m41;
 }
 
 
@@ -277,49 +288,54 @@ EXTERN void transpose_FM(float32 *om, float32 *im, count_t n[2]){
 			om[i*n[1]+j] = im[j*n[1]+i];
 		}	
 	}
+	count_t tmp = n[0];
+	n[0] = n[1];
+	n[1] = tmp;
 };
 
 
 EXTERN void inv_FM(float32 *om, float32 *im, count_t n){
 	count_t nn[] = {n, n};
-	transpose_FM(om, im, nn);
-	normalize_FM(om, om, n);
+    normalize_FM(om, im, n);
+	transpose_FM(om, om, nn);
 };
 
 
 EXTERN void normalize_FM(float32 *om, float32 *im, count_t n){
 	count_t nn[] = {n, n};
-	mul_FM_FS(om, im, 1.0 / det_FM(im, n), nn);
+	float32 det = det_FM(im, om, n);
+	mul_FM_FS(om, im, 1.0 / det, nn);
 };
 
 
-EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n[2]){
+EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n, matrix_symmetry_e symm){
     count_t i,j,ii,jj;
 
-    for(i=0; i<n[0]; i++){
-        for(j=i; j<n[1]; j++){
-            ii = j + n[1] * i;
-            jj = i + n[1] * j;
-            float32 tmp = 0.5 * (im[ii] + im[jj]);
-            om[ii] = tmp;
-            om[jj] = tmp;
+    if(symm == MATRIX_SYMMETRY){
+        for(i=0; i<n-1; i++){
+            for(j=i+1; j<n; j++){
+                ii = j + n * i;
+                jj = i + n * j;
+                float32 tmp = 0.5 * (im[ii] + im[jj]);
+                om[ii] = tmp;
+                om[jj] = tmp;
+            }
         }
+    }else {
+
+        for(i=0; i<n; i++){
+            for(j=i; j<n; j++){
+                ii = j + n * i;
+                jj = i + n * j;
+                float32 tmp = 0.5 * (im[ii] - im[jj]);
+                om[ii] = tmp;
+                om[jj] = -tmp;
+             }
+        }
+
     }
 };
 
-EXTERN void antisymmetrify_FM(float32 *om, float32 *im, count_t n[2]){
-    count_t i,j,ii,jj;
-
-    for(i=0; i<n[0]; i++){
-        for(j=i; j<n[1]; j++){
-            ii = j + n[1] * i;
-            jj = i + n[1] * j;
-            float32 tmp = 0.5 * (im[ii] - im[jj]);
-            om[ii] = tmp;
-            om[jj] = tmp;
-        }
-    }
-};
 
 
 EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n){

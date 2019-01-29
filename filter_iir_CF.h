@@ -15,9 +15,9 @@ namespace filter {
 typedef struct {
     cfloat          *weights_a;     //!< Recursive coefficients
     cfloat          *weights_b;     //!< FIR coefficients
-    cfloat          *buffer;        //!< Circular buffer
+    cfloat          *cbuffer;        //!< Circular buffer
     count_t         cb_index;       //!< Circular buffer index
-    count_t         size;       	//!< Circular buffer size. Size = max(size_a, size_b)
+    count_t         cb_size;       	//!< Circular buffer size. Size = max(size_a, size_b)
     count_t         size_a;         //!< Recursive weights count. Must size_a <= size_b
     count_t         size_b;         //!< FIR weghts count. Count same as circular buffer elements count
     cfloat          input;          //!< Input value
@@ -30,6 +30,7 @@ EXTERN int iir_init_CF(
         cfloat *weights_a,
         cfloat *weights_b,
         cfloat *buffer,
+        count_t size,
         count_t size_a,
         count_t size_b
 );

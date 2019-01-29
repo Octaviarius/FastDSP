@@ -13,21 +13,24 @@ EXTERN int iir_init_F(
         iir_f_t *iir,
         float32 *weights_a,
         float32 *weights_b,
-        float32 *buffer,
+        float32 *cbuffer,
+        count_t cb_size,
         count_t size_a,
         count_t size_b
 ){
+    if(cb_size < __max(size_a, size_b))
+        return -1;
     iir->weights_a = weights_a;
     iir->weights_b = weights_b;
-    iir->buffer = buffer;
+    iir->cbuffer = cbuffer;
+    iir->cb_size = cb_size;
     iir->size_a = size_a;
     iir->size_b = size_b;
-    iir->size = __max(size_a, size_b);
 	iir->cb_index = 0;
     iir->input = 0.0;
     iir->output = 0.0;
 
-	memset(iir->buffer, 0, iir->size * sizeof(*iir->buffer));
+	memset(iir->cbuffer, 0, iir->cb_size * sizeof(*iir->cbuffer));
 	memset(iir->weights_b, 0, iir->size_b * sizeof(*iir->weights_b));
 	memset(iir->weights_a, 0, iir->size_a * sizeof(*iir->weights_a));
 	iir->weights_b[0] = 1.0;
@@ -50,7 +53,7 @@ EXTERN float32 iir_process_F(
 	float32 out;
 	count_t cidx;
 	count_t sz;
-    count_t buff_sz = iir->size;
+    count_t buff_sz = iir->cb_size;
 	count_t k;
 	
 	iir->input = out = input;
@@ -58,14 +61,14 @@ EXTERN float32 iir_process_F(
 	//recursive part convolve
 	sz = iir->size_a;	
 	cidx = iir->cb_index;
-	buff = &iir->buffer[cidx];
+	buff = &iir->cbuffer[cidx];
 	weights = iir->weights_a;
 	for(k=0; k<sz; k++){
         out -= *weights * *buff;
         weights++;
         buff++;
 		if(++cidx == buff_sz)
-			buff = iir->buffer;		
+			buff = iir->cbuffer;		
 	}
 	
 	//add value in circled buffer
@@ -75,7 +78,7 @@ EXTERN float32 iir_process_F(
 	else
 		cidx--;
 	iir->cb_index = cidx;
-	buff = &iir->buffer[cidx];
+	buff = &iir->cbuffer[cidx];
 	*buff = out;
 	
 	//convolve 
@@ -87,7 +90,7 @@ EXTERN float32 iir_process_F(
         weights++;
         buff++;
 		if(++cidx == buff_sz)
-			buff = iir->buffer;		
+			buff = iir->cbuffer;		
 	}		
 	
 	return (iir->output = out);	

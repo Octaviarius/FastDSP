@@ -20,6 +20,7 @@ EXTERN int median_init_F(
         count_t *idx_buffer,
         count_t size
 ){
+    median->size = size;
     median->buffer = buffer;
     median->idx_buffer = idx_buffer;
     for(count_t i=0; i<size; i++){

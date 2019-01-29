@@ -224,14 +224,10 @@ double_memswap:
 ;loop
 	NOP
 	RPTB		loop_memswap, AL
-	MOV			AL, *XAR5
-	MOV			AH, *XAR4
-	MOV			*XAR4++, AL
-	MOV			*XAR5++, AH
-	MOV			AL, *XAR5
-	MOV			AH, *XAR4
-	MOV			*XAR4++, AL
-	MOV			*XAR5++, AH
+	MOV32		R0H, *XAR5
+	MOV32		R1H, *XAR4
+	MOV32		*XAR4++, R0H
+	MOV32		*XAR5++, R1H
 loop_memswap:
 
 return_memswap:

@@ -61,7 +61,7 @@ EXTERN int fft_init_CF(
 EXTERN cfloat *fft_transform_CF(
         fft_cf_t *cfft,
         cfloat *in_buffer,
-        cfloat *aux_buffer,
+        cfloat *aux_buffer
 ){
 	cfft->InPtr = in_buffer;
 	cfft->OutPtr = aux_buffer;

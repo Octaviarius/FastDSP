@@ -114,6 +114,9 @@ EXTERN cfloat mean_CFV(cfloat *iv, count_t n);
 //! Circle convolution
 EXTERN void conv_circle_CFV(cfloat *ov, cfloat *iv, cfloat *kern, count_t n, count_t kern_size);
 
+//! Circle shift
+EXTERN void circ_shift_CFV(cfloat *ov, cfloat *iv, count_t n, count_t shift);
+
 EXTERN void traverse_CFV(cfloat *ov, cfloat *iv, count_t n, pfunc_cf_t func);
 EXTERN void traverse_CFV_CFV(cfloat *ov, cfloat *iv1, cfloat *iv2, count_t n, pfunc2_cf_t func);
 

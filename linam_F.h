@@ -13,6 +13,12 @@ namespace lina {
 #endif
 
 
+typedef enum {
+    MATRIX_SYMMETRY = 0,
+    MATRIX_ANTISYMMETRY
+} matrix_symmetry_e;
+
+
 
 typedef struct {
 	union{
@@ -101,38 +107,41 @@ EXTERN void sub_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t n[2]);
 EXTERN void mul_FM_FS(float32 *om, float32 *lm, float32 rs, count_t n[2]);
 //! Multiplication matrixes element-wise operation om[i,j] = im[i,j] * rm[i,j]
 EXTERN void mul_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t n[2]);
-//! Pure multiplication matrixes operation om[i,j] = lm[i,k] * rm[k,j]
+//! Multiplication matrixes operation om[i,j] = lm[i,k] * rm[k,j]
 EXTERN void mmul_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t n[2]);
-//! Pure multiplication matrix by vector, result is vector operation ov[i] = lm[i,k] * rv[k]
+//! Multiplication matrix by vector, result is vector operation ov[i] = lm[i,k] * rv[k]
 EXTERN void mmul_FM_FV(float32 *ov, float32 *lm, float32 *rv, count_t n[2]);
-//! Pure multiplication vector by matrix, result is vector operation ov[j] = lv[k] * rm[k,j]
-EXTERN void mmul_FV_FM(float32 *ov, float32 *lm, float32 *rv, count_t n[2]);
+//! Multiplication vector by matrix, result is vector operation ov[j] = lv[k] * rm[k,j]
+EXTERN void mmul_FV_FM(float32 *ov, float32 *lv, float32 *rm, count_t n[2]);
 //! Tensor multiplication vector by vector, result is matrix  om[i,j] = lv[i] * rv[j]
-EXTERN void tmul_FV_FM(float32 *ov, float32 *lm, float32 *rv, count_t n[2]);
+EXTERN void tmul_FV_FV(float32 *om, float32 *lv, float32 *rv, count_t n[2]);
 
 //! Get track result = im[i,i]
 EXTERN float32 track_FM(float32 *im, count_t n);
 
-//! Get determinant of matrix result = im[i,i]
-EXTERN float32 det_FM(float32 *im, count_t n);
-EXTERN float32 det2_FM(mat2_f_t *im, count_t n);
-EXTERN float32 det3_FM(mat3_f_t *im, count_t n);
-EXTERN float32 det4_FM(mat4_f_t *im, count_t n);
-EXTERN float32 det5_FM(mat5_f_t *im, count_t n);
+/*! Get determinant of matrix result = im[i,i]
+ * As a bonus after call function variable aux_mat will be triangulated
+ * @warning If aux_mat == NULL or aux_mat == im, then 'im' matrix will be destroy by triangulation algorithm.
+ */
+EXTERN float32 det_FM(float32 *im, float32 *aux_mat, count_t n);
+EXTERN float32 det2_FM(mat2_f_t *im);
+EXTERN float32 det3_FM(mat3_f_t *im);
 
 //! Get track om[i,j] = im[j,i]
 EXTERN void transpose_FM(float32 *om, float32 *im, count_t n[2]);
 
-//! Inverse matrix om[i,j] = im[j,i] / det(im)
+/*! Inverse matrix om[i,j] = im[j,i] / det(im)
+ * @warning 'om' must be not equal 'im', because @see det_FM
+ */
 EXTERN void inv_FM(float32 *om, float32 *im, count_t n);
 
-//! Normalize operation om[i,j] = im[i,j] / det(im)
+/*! Normalize operation om[i,j] = im[i,j] / det(im)
+ * @warning 'om' must be not equal 'im', because @see det_FM
+ */
 EXTERN void normalize_FM(float32 *om, float32 *im, count_t n);
 
-//! Operation symmetrification om[i,j] == im[j,i]
-EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n[2]);
-//! Operation antisymmetrification om[i,j] == im[j,i]
-EXTERN void antisymmetrify_FM(float32 *om, float32 *im, count_t n[2]);
+//! Operation symmetrification om[i,j] == +-im[j,i]
+EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n, matrix_symmetry_e symm);
 
 //! Diagonalization om[i,i] = (i != j) 0 : im[i,j]
 EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n);

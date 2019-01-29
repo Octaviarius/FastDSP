@@ -14,17 +14,19 @@ EXTERN int iir_init_CF(
         iir_cf_t *iir,
         cfloat *weights_a,
         cfloat *weights_b,
-        cfloat *buffer,
+        cfloat *cbuffer,
+        count_t cb_size,
         count_t size_a,
         count_t size_b
 ){
-
+    if(cb_size < __max(size_a, size_b))
+        return -1;
     iir->weights_a = weights_a;
     iir->weights_b = weights_b;
-    iir->buffer = buffer;
+    iir->cbuffer = cbuffer;
+    iir->cb_size = cb_size;
     iir->size_a = size_a;
     iir->size_b = size_b;
-    iir->size = __max(size_a, size_b);
     iir->cb_index = 0;
 
     cfloat v;
@@ -32,7 +34,7 @@ EXTERN int iir_init_CF(
     iir->input = v;
     iir->output = v;
 
-	memset(iir->buffer, 0, iir->size * sizeof(*iir->buffer));
+	memset(iir->cbuffer, 0, iir->cb_size * sizeof(*iir->cbuffer));
 	memset(iir->weights_b, 0, iir->size_b * sizeof(*iir->weights_b));
 	memset(iir->weights_a, 0, iir->size_a * sizeof(*iir->weights_a));
     iir->weights_b[0].re = 1.0;
@@ -54,7 +56,7 @@ EXTERN cfloat iir_process_CF(
 	cfloat out;
 	count_t cidx;
 	count_t sz;
-	count_t buff_sz = iir->size;
+	count_t buff_sz = iir->cb_size;
 	count_t k;
 	
 	iir->input = out = input;
@@ -62,7 +64,7 @@ EXTERN cfloat iir_process_CF(
 	//recursive part convolve
 	sz = iir->size_a;	
 	cidx = iir->cb_index;
-	buff = &iir->buffer[cidx];
+	buff = &iir->cbuffer[cidx];
 	weights = iir->weights_a;
 	for(k=0; k<sz; k++){
         out.re -= weights->re * buff->re - weights->im * buff->im;
@@ -70,7 +72,7 @@ EXTERN cfloat iir_process_CF(
         weights++;
         buff++;
 		if(++cidx == buff_sz)
-			buff = iir->buffer;		
+			buff = iir->cbuffer;		
 	}
 	
 	//add value in circled buffer
@@ -80,7 +82,7 @@ EXTERN cfloat iir_process_CF(
 	else
 		cidx--;
 	iir->cb_index = cidx;
-	buff = &iir->buffer[cidx];
+	buff = &iir->cbuffer[cidx];
 	*buff = out;
 	
 	//convolve 	
@@ -93,7 +95,7 @@ EXTERN cfloat iir_process_CF(
         weights++;
         buff++;
 		if(++cidx == buff_sz)
-			buff = iir->buffer;		
+			buff = iir->cbuffer;		
 	}		
 	
 	return (iir->output = out);	
