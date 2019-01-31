@@ -1171,7 +1171,6 @@ loop_min_FV_FV:
 ;3 cycles
 	.sect .text
 _constrain_FS:
-	MOV32		R2H, *-SP[2]
 	MAXF32		R0H, R1H
 	MINF32		R0H, R2H
 	LRETR

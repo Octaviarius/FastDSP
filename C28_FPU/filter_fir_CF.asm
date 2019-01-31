@@ -23,6 +23,12 @@ _fir_process_CF:
 	MOV32		*SP++, R5H
 	MOV32		*SP++, R6H
 	MOV32		*SP++, R7H
+	PUSH		XAR6
+
+	MOVL		XAR7, XAR4
+	ADDB		XAR7, #ARG_INPUT
+	RPT			#3
+	||PWRITE	*XAR7, *XAR5++
 
 ;main algorithm
 	MOVL		XAR5, *+XAR4[ARG_WA]		;load WEIGHTS
@@ -91,6 +97,10 @@ loop_a:
 	MOV32		*+XAR4[0], R6H		;write output_re
 	MOV32		*+XAR4[2], R7H		;write output_im
 
+	POP			XAR7
+	ADDB		XAR7, #ARG_INPUT
+	RPT			#3
+	||PWRITE	*XAR7, *XAR4++
 
 ;restore context
 	MOV32		R7H, *--SP

@@ -1,22 +1,31 @@
 # Changelog
 Here will be illustrated work progress
 
+## [0.3.0] - 2019-01-31
+### Added
+- filter: IIR complex float realization for **C28_FPU**
+- controller: PID interface and realization for **generic** and **C28_FPU**
+### Changed
+- filter: For FIR and IIR filters C files with added for **C28_FPU**
+### Fixed
+- sampling: sampling_resample_poly3_F now input and output vector pointers must be different
+- lina: constrain_FS for **C28_FPU** error with load vmax value
 
-## [0.2.0] - 28-01-2019	
+## [0.2.0] - 2019-01-28
 ### Added
 - lina: Add circle shift for F and CF vectors
 - sampling: API and realization of resampling linear, resampling cubic, decimation. But upsampling algorithm in resampling cubic need rework
 ### Changed
 - lina: Reshape matrix symmetrify function
 - filter: IIR interface, add buffer size variable and check condition if size < max(size_a, size_b)
-- memfuncs: optimized memswap C28_FPU
+- memfuncs: optimized memswap **C28_FPU**
 ### Removed
 - interpolation: Envelope functions
 ### Fixed
 - lina: Fatality code of matrix determinant was replaced new variant [Gauss matrix eliminating](https://en.wikipedia.org/wiki/Gaussian_elimination)
 
 	
-## [0.1.0] - 30-10-2017
+## [0.1.0] - 2017-10-30
 ### Added
 - Start realization idea about fast DSP lib.
 - Common types, float32, cfloat, etc.

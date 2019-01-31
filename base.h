@@ -149,7 +149,9 @@ typedef int icount_t;
 	typedef cfloat (*pfunc2_cf_t)(cfloat, cfloat);
 
 
-
+inline float32 constrain_F(float32 val, float32 vmin, float32 vmax){
+    return (val < vmin) ? vmin : (val > vmax) ? vmax : val;
+}
 
 
 #ifdef __cplusplus

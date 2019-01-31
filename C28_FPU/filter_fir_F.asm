@@ -47,7 +47,7 @@ if_cidx0:
 	ZERO		R7H							;-//-
 
 
-	MOV32		R0H, *+XAR4[ARG_INPUT]		;load input
+	MOV32		*+XAR4[ARG_INPUT], R0H 		;save input
 	MOV32		*+XAR6[AR1], R0H			;write input_re to BUFFER
 	MOV			AH, *+XAR4[ARG_SIZE]		;load SIZE
 

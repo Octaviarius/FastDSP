@@ -32,13 +32,10 @@ EXTERN void random_FV(float32 *ov, count_t n, float32 vmin, float32 vmax){
 
 
 EXTERN float32 inc_F(float32 *value){
-    if(*value >= 0.0){
+    if(*value >= 0.0)
         (*((uint32_t*)value))++;
-        (*((uint32_t*)value)) &= 1UL<<31;
-    }else{
+    else
         (*((uint32_t*)value))--;
-        (*((uint32_t*)value)) |= 1UL<<31;
-    }
     return *value;
 }
 

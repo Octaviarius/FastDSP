@@ -17,6 +17,7 @@ namespace sampling{
 EXTERN void sampling_resample_poly1_F(float32 *ov, float32 *iv, count_t n_out, count_t n_in);
 
 /*! @brief Resampling signal by poly a0 + a1 * x + a2 * x^2 + a3 * x^3
+ * @warning input and output vector pointers must be not equal! Maybe in latest versions it fixed :)
  */
 EXTERN void sampling_resample_poly3_F(float32 *ov, float32 *iv, count_t n_out, count_t n_in);
 

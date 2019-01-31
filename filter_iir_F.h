@@ -32,8 +32,8 @@ EXTERN int iir_init_F(
         iir_f_t *iir,
         float32 *weights_a,
         float32 *weights_b,
-        float32 *buffer,
-        count_t size,
+        float32 *cbuffer,
+        count_t cb_size,
         count_t size_a,
         count_t size_b
 );

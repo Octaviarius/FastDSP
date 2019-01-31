@@ -14,7 +14,7 @@ namespace fastdsp {
 
 
 #ifdef __cplusplus
-};	//namespace fastdsp
+}	//namespace fastdsp
 #endif
 
 

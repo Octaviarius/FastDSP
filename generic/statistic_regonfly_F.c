@@ -93,7 +93,7 @@ EXTERN void regonfly_poly2_process_F(
         B[0] = obj->m_y;
         B[1] = obj->m_yx;
         B[2] = obj->m_yx2;
-// this code is bugged, I don't know what happend
+
         // solve by Gauss method
         float32 k;
         // 1 stage
@@ -118,40 +118,6 @@ EXTERN void regonfly_poly2_process_F(
         obj->c[1] = (B[1] - M[1][2] * obj->c[2]) / M[1][1];
         obj->c[0] = (B[0] - M[0][2] * obj->c[2] - M[0][1] * obj->c[1]); // and div by M[0][0], but it equal 1.0;
 
-
-/*
-        //solve by Kramer method
-        float32 detM =  M[0][0] * M[1][1] * M[2][2] +
-                        M[1][0] * M[2][1] * M[0][2] +
-                        M[2][0] * M[0][1] * M[1][2] -
-                        M[2][0] * M[1][1] * M[0][2] -
-                        M[1][0] * M[0][1] * M[2][2] -
-                        M[0][0] * M[2][1] * M[1][2];
-
-        float32 det0 =  B[0] * M[1][1] * M[2][2] +
-                        B[1] * M[2][1] * M[0][2] +
-                        B[2] * M[0][1] * M[1][2] -
-                        B[2] * M[1][1] * M[0][2] -
-                        B[1] * M[0][1] * M[2][2] -
-                        B[0] * M[2][1] * M[1][2];
-
-        float32 det1 =  M[0][0] * B[1] * M[2][2] +
-                        M[1][0] * B[2] * M[0][2] +
-                        M[2][0] * B[0] * M[1][2] -
-                        M[2][0] * B[1] * M[0][2] -
-                        M[1][0] * B[0] * M[2][2] -
-                        M[0][0] * B[2] * M[1][2];
-
-        float32 det2 =  M[0][0] * M[1][1] * B[2] +
-                        M[1][0] * M[2][1] * B[0] +
-                        M[2][0] * M[0][1] * B[1] -
-                        M[2][0] * M[1][1] * B[0] -
-                        M[1][0] * M[0][1] * B[2] -
-                        M[0][0] * M[2][1] * B[1];
-        obj->c[0] = det0 / detM;
-        obj->c[1] = det1 / detM;
-        obj->c[2] = det2 / detM;
-*/
     }
 }
 
