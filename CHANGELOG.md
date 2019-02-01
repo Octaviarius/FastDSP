@@ -1,6 +1,12 @@
 # Changelog
 Here will be illustrated work progress
 
+
+## [0.4.0] - 2019-02-01
+### Added 
+- sampling: sample_oversample_F for **generic**
+
+
 ## [0.3.1] - 2019-02-01
 ### Fixed 
 - controller: PID critical pipeline delay for **C28_FPU** 

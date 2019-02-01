@@ -241,7 +241,19 @@ EXTERN void sampling_decimate_F(float32 *ov, float32 *iv, count_t n, count_t fac
     }
 }
 
+EXTERN void sampling_oversample_F(float32 *ov, float32 *iv, count_t n, count_t factor){
+    register count_t i;
+    register float32 summ = 0.0;
 
+    while(n-- > 0){
+        summ += *(iv++);
+        if(++i >= factor){
+            *(ov++) = summ;
+            summ = 0.0;
+            i = 0;
+        }
+    }
+}
 
 
 
