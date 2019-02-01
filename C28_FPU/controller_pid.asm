@@ -15,7 +15,7 @@ ARG_KD 		.set 12
 ARG_SAT 	.set 14
 
 
-;35 cycles
+;38 cycles
 	.sect .text
 _pid_process_F:
 
@@ -63,9 +63,13 @@ _pid_process_F:
 	ZERO		R2H
 	ZERO		R3H
 
+	; !!! very important add NOP instructions for pipeline delay !!!
 	MACF32		R7H, R3H, *XAR4++, *XAR7++	;Kp * P
+	NOP
 	MACF32		R7H, R3H, *XAR4++, *XAR7++	;Ki * I
+	NOP
 	MACF32		R7H, R3H, *XAR4++, *XAR7++	;Kd * D
+	NOP
 	ADDF32		R0H, R2H, R3H	;result summation
 
 	; saturate OUT
@@ -73,6 +77,6 @@ _pid_process_F:
 	MAXF32		R0H, R3H
 	MOV32		R3H, *XAR5++	;load sat_out max
 	MINF32		R0H, R3H
-	MOV32		*XAR4, R0H		;save OUT
+	MOV32		*XAR4++, R0H		;save OUT
 
 	LRETR

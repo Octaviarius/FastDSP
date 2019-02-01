@@ -56,7 +56,8 @@ EXTERN float32 pid_process_F(
     pid->control = constrain_F(
             pid->p * pid->k[PID_KP] +
             pid->i * pid->k[PID_KI] +
-            pid->d * pid->k[PID_KD], pid->saturation[PID_SAT_OUT][0], pid->saturation[PID_SAT_OUT][1];
+            pid->d * pid->k[PID_KD],
+            pid->saturation[PID_SAT_OUT][0], pid->saturation[PID_SAT_OUT][1]);
 
     return pid->control;
 }

@@ -1,6 +1,13 @@
 # Changelog
 Here will be illustrated work progress
 
+## [0.3.1] - 2019-02-01
+### Fixed 
+- controller: PID critical pipeline delay for **C28_FPU** 
+### Removed
+- extmath: function inc_F
+
+
 ## [0.3.0] - 2019-01-31
 ### Added
 - filter: IIR complex float realization for **C28_FPU**

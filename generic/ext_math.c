@@ -30,15 +30,6 @@ EXTERN void random_FV(float32 *ov, count_t n, float32 vmin, float32 vmax){
 
 
 
-
-EXTERN float32 inc_F(float32 *value){
-    if(*value >= 0.0)
-        (*((uint32_t*)value))++;
-    else
-        (*((uint32_t*)value))--;
-    return *value;
-}
-
 /*
 EXTERN float32 pow2_F(int power){
 	union{
