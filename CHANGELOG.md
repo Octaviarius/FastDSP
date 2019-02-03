@@ -2,6 +2,19 @@
 Here will be illustrated work progress
 
 
+## [0.5.0] - 2019-02-01
+### Added
+- lina: triangulation matrix operation by [Gauss matrix eliminating](https://en.wikipedia.org/wiki/Gaussian_elimination)
+### Changed
+- lina: rename get and set col and row of matrix
+- lina: reuse triangulation in determinant of matrix
+### Fixed 
+- lina: get and set row and column of matrix
+- lina: matrix multiplication now use different agreed matrix: NxM \* MxP = NxP
+- lina: multiplication matrix by vector and vector by matrix
+- lina: tensor multiplication row-vector by col-vector
+
+
 ## [0.4.0] - 2019-02-01
 ### Added 
 - sampling: sample_oversample_F for **generic**

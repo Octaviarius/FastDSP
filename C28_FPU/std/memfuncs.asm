@@ -18,16 +18,16 @@
 _memcpy:
 
 	SUBB AL, #1							;Repeat "N-1" times
-	BF done_low_memcpy, NC				;Branch if N was zero
+	BF memcpy_done_low, NC				;Branch if N was zero
 	MOVL XAR7, XAR5						;XAR7 = XAR5 = dst
 	RPT @AL
 	||PREAD *XAR4++, *XAR7				;Do the copy
 
 
-done_low_memcpy:
+memcpy_done_low:
 
 	CMP 	AH, #0				;return if AH == 0
-	BF 		done_hi_memcpy, EQ	;-//-
+	BF 		memcpy_done_hi, EQ	;-//-
 
 	ADD		AL, #1				;restore AL and save
 	PUSH	AL					;-//-
@@ -41,18 +41,18 @@ done_low_memcpy:
 	MOVL	XAR7, ACC			;-//-
 
 
-loop_memcpy:
+memcpy_loop:
 	RPT 	*-SP[1]
 	||PREAD *XAR4++, *XAR7		;Do the copy
 
 	MOVL	ACC, XAR7			;increment SRC by 0xffff
 	ADD		ACC, *-SP[1]		;-//-
 	MOVL	XAR7, ACC			;-//-
-	BANZ	loop_memcpy, AR0--
+	BANZ	memcpy_loop, AR0--
 ;loop
 
 	ADD		SP, #2				;restore stack
-done_hi_memcpy:
+memcpy_done_hi:
 
 	LRETR									;return
 
@@ -93,15 +93,15 @@ _memset:
 	PUSH	AH
 
 	SUBB 	AL, #1					;Repeat "N-1" times
-	BF 		done_low_memset, NC			;Branch if N was zero
+	BF 		memset_done_low, NC			;Branch if N was zero
 
 	MOV		AH, AR5
 	RPT 	@AL
 	||MOV 	*XAR4++, AH				;Do the copy
-done_low_memset:
+memset_done_low:
 
 	CMP 	*-SP[1], #0				;return if AH == 0
-	BF 		done_hi_memset, EQ			;-//-
+	BF 		memset_done_hi, EQ			;-//-
 
 	MOV		AL, AR5
 	PUSH	#0xffff				;push value
@@ -109,15 +109,15 @@ done_low_memset:
 	MOVZ	AR0, *-SP[2]		;-//-
 	SUBB	XAR0, #1			;AH - 1
 
-loop_memset:
+memset_loop:
 	RPT 	*-SP[1]
 	||MOV *XAR4++, AL			;Do the copy
-	BANZ	loop_memset, AR0--
+	BANZ	memset_loop, AR0--
 ;loop
 
 	SUBB	SP, #1				;restore stack
 
-done_hi_memset:
+memset_done_hi:
 
 	SUBB	SP, #1				;restore stack
 
@@ -136,11 +136,11 @@ done_hi_memset:
 ;=================/ memset16 /========================
 _memset16:
 		ADDB		AH, #-1						;Repeat "N-1" times
-		BF			done_memset16, NC					;Branch if N was zero
+		BF			memset_done16, NC					;Branch if N was zero
 		RPT			@AH
 	||	MOV			*XAR4++, AL					;Initialize the memory
 
-done_memset16:
+memset_done16:
 		LRETR									;return
 
 
@@ -159,8 +159,8 @@ _memmove:
 	MOVL	ACC, XAR5
 
 	CMPL	ACC, XAR4
-	BF		gt_memmove, GT
-	BF		eq0_memmove, EQ
+	BF		memmove_gt, GT
+	BF		memmove_eq0, EQ
 ;less
 	MOVL	ACC, XAR4
 	ADDL	ACC, *-SP[2]
@@ -172,22 +172,22 @@ _memmove:
 
 	POP		ACC
 ;loop
-loop_memmove:
+memmove_loop:
 	MOVZ	AR0, *--XAR5
 	MOV		*--XAR4, AR0
 	SUBB	ACC, #1
-	BF		loop_memmove, NEQ
+	BF		memmove_loop, NEQ
 ;end loop
 	LRETR
 
 
 
-gt_memmove:
+memmove_gt:
 	POP		ACC
 	LCR		_memcpy
 	LRETR
 
-eq0_memmove:
+memmove_eq0:
 	POP		ACC
 	LRETR
 
@@ -206,29 +206,42 @@ eq0_memmove:
 _memswap:
 
 	TBIT		AL, #0
-	BF			double_memswap, NTC
+	BF			memswap_double, NTC
 
-	MOV			AR0, AL
+	MOVL		XAR0, ACC
 
 	MOV			AL, *XAR5
 	MOV			AH, *XAR4
 	MOV			*XAR4++, AL
 	MOV			*XAR5++, AH
 
-	MOV			AL, AR0
+	MOVL		ACC, XAR0
 
-double_memswap:
-	LSR			AL, #1
-	SUBB		AL, #1
-	BF			return_memswap, NC
+memswap_double:
+	MOVB		T, #1
+	LSRL		ACC, #1
+	SUBB		ACC, #1
+	BF			memswap_return, NC
+	
 ;loop
+memswap_highloop:
 	NOP
-	RPTB		loop_memswap, AL
-	MOV32		R0H, *XAR5
-	MOV32		R1H, *XAR4
-	MOV32		*XAR4++, R0H
-	MOV32		*XAR5++, R1H
-loop_memswap:
+	RPTB		memswap_loop, AL
+	MOV			AL, *XAR5
+	MOV			AR6, *XAR4
+	MOV			*XAR4++, AL
+	MOV			*XAR5++, AR6
+	MOV			AL, *XAR5
+	MOV			AR6, *XAR4
+	MOV			*XAR4++, AL
+	MOV			*XAR5++, AR6
+memswap_loop:
 
-return_memswap:
+	CMPB		AH, #0
+	BF			memswap_return, EQ
+	MOVW		AL, #0xffff
+	SUBB		AH
+	SB			memswap_highloop
+	
+memswap_return:
 	LRETR

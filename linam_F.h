@@ -79,14 +79,14 @@ EXTERN void create_matrix_FV(float32 *om, float32 **iv, count_t n);
 
 
 //! Create vector from matrix row
-EXTERN void row_FM_FV(float32 *ov, float32 *im, count_t row, count_t n[2]);
+EXTERN void row_get_FM(float32 *ov, float32 *im, count_t row, count_t n[2]);
 //! Create vector from matrix column
-EXTERN void col_FM_FV(float32 *ov, float32 *im, count_t col, count_t n[2]);
+EXTERN void col_get_FM(float32 *ov, float32 *im, count_t col, count_t n[2]);
 
 //! Assign vector to matrix row
-EXTERN void row_FV_FM(float32 *im, float32 *iv, count_t row, count_t n[2]);
+EXTERN void row_set_FM(float32 *im, float32 *iv, count_t row, count_t n[2]);
 //! Assign vector to matrix col
-EXTERN void col_FV_FM(float32 *im, float32 *iv, count_t col, count_t n[2]);
+EXTERN void col_set_FM(float32 *im, float32 *iv, count_t col, count_t n[2]);
 
 //! Row permutation
 EXTERN void row_perm_FM(float32 *im, count_t row1, count_t row2, count_t n[2]);
@@ -108,12 +108,12 @@ EXTERN void mul_FM_FS(float32 *om, float32 *lm, float32 rs, count_t n[2]);
 //! Multiplication matrixes element-wise operation om[i,j] = im[i,j] * rm[i,j]
 EXTERN void mul_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t n[2]);
 //! Multiplication matrixes operation om[i,j] = lm[i,k] * rm[k,j]
-EXTERN void mmul_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t n[2]);
-//! Multiplication matrix by vector, result is vector operation ov[i] = lm[i,k] * rv[k]
+EXTERN void mmul_FM_FM(float32 *om, float32 *lm, float32 *rm, count_t ln[2], count_t rn[2]);
+//! Multiplication matrix by col-vector, result is col-vector operation ov[i] = lm[i,k] * rv[k]
 EXTERN void mmul_FM_FV(float32 *ov, float32 *lm, float32 *rv, count_t n[2]);
-//! Multiplication vector by matrix, result is vector operation ov[j] = lv[k] * rm[k,j]
+//! Multiplication row-vector by matrix, result is row-vector operation ov[j] = lv[k] * rm[k,j]
 EXTERN void mmul_FV_FM(float32 *ov, float32 *lv, float32 *rm, count_t n[2]);
-//! Tensor multiplication vector by vector, result is matrix  om[i,j] = lv[i] * rv[j]
+//! Tensor multiplication row-vector by col-vector, result is matrix  om[i,j] = lv[i] * rv[j]
 EXTERN void tmul_FV_FV(float32 *om, float32 *lv, float32 *rv, count_t n[2]);
 
 //! Get track result = im[i,i]
@@ -143,7 +143,10 @@ EXTERN void normalize_FM(float32 *om, float32 *im, count_t n);
 //! Operation symmetrification om[i,j] == +-im[j,i]
 EXTERN void symmetrify_FM(float32 *om, float32 *im, count_t n, matrix_symmetry_e symm);
 
-//! Diagonalization om[i,i] = (i != j) 0 : im[i,j]
+//! Triangulation matrix to om[i,i] = (i > j) ? 0 : matrix[i,j]
+EXTERN void triangulation_FM(float32 *om, float32 *im, count_t n);
+
+//! Diagonalization om[i,i] = (i != j) ? 0 : matrix[i,j]
 EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n);
 
 
