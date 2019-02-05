@@ -218,8 +218,8 @@ _memswap:
 	MOVL		ACC, XAR0
 
 memswap_double:
-	MOVB		T, #1
-	LSRL		ACC, #1
+	MOV			T, #1
+	LSRL		ACC, T
 	SUBB		ACC, #1
 	BF			memswap_return, NC
 	
@@ -240,8 +240,8 @@ memswap_loop:
 	CMPB		AH, #0
 	BF			memswap_return, EQ
 	MOVW		AL, #0xffff
-	SUBB		AH
-	SB			memswap_highloop
+	SUBB		AH, #1
+	SB			memswap_highloop, UNC
 	
 memswap_return:
 	LRETR

@@ -365,8 +365,6 @@ EXTERN void triangulation_FM(float32 *om, float32 *im, count_t n){
 
 
 EXTERN void diagonalization_FM(float32 *om, float32 *im, count_t n){
-    float32 *str_base;
-
     count_t i,j;
 
     // left-side diagonalization

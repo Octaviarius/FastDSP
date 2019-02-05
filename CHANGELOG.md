@@ -2,6 +2,12 @@
 Here will be illustrated work progress
 
 
+## [0.5.1] - 2019-02-05
+## Added
+- filter: kalman filtering API
+## Changed 
+- Start formating formulas in LaTex notation in comments
+
 ## [0.5.0] - 2019-02-01
 ### Added
 - lina: triangulation matrix operation by [Gauss matrix eliminating](https://en.wikipedia.org/wiki/Gaussian_elimination)

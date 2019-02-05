@@ -41,6 +41,7 @@
 	.global _mean3_FV
 
 	.global _conv_circle_FV
+;	.global _circ_shift_FV
 
 	.global _horner_FV
 
@@ -1401,6 +1402,69 @@ loop_conv_circle_FV:
 	
 	
 	
+
+
+;================/ _circ_shift_FV /==============
+;_circ_shift_FV:
+
+;	PUSH		ACC
+;	PUSH		XAR4
+;	PUSH		XAR5
+;	MOVL		ACC, XAR5
+;	CMPL		ACC, *-SP[4]
+;	BF			circ_shift_FV_anyway, EQ
+;	;simple variant, ov != iv. Using memcpy
+;
+;	MOV			AL, *-SP[5]	;load shift
+;	MOVB		AH, #0
+;	LSL			ACC, #1
+;	ADDL		ACC, *-SP[4] 	;ov += shift
+;	MOVL		XAR4, ACC
+;
+;	MOVL		ACC, *-SP[6]
+;	SUB			AL, AH
+;	MOVB		AH, #0
+;	LSL			ACC, #1			;size = 2 * (n - shift)
+;	PUSH		ACC
+;
+;	LCR			_memcpy			;copy n - shift values
+;
+;	POP			ACC
+;	ADDL		ACC, *-SP[2]
+;	MOVL		XAR5, ACC		;iv += n - shift
+;
+;	MOVL		XAR4, *-SP[4]	;ov = ov arg
+;
+;	MOV			AL, *-SP[5]
+;	MOV			AH, #0
+;	LSL			ACC, #1			;size = 2 * shift
+;
+;	LCR			_memcpy			;copy n - shift values
+;
+;	SUBB		SP, #6
+;	LRETR
+;
+;circ_shift_FV_anyway:
+;	;if ov == iv
+;	MOVL		XAR4, *-SP[4]	;load pointer
+;	MOVZ		AR5, *-SP[6]	;load n
+;	SUBB		XAR0, #1
+;	MOV			AL, *-SP[5]		;load shift
+;	MOV			AH, #0
+;	ADDB		ACC, #1
+;	LSL			ACC, #1
+;
+;	MOV32		R0H, *XAR4		;load r0 = iv[0]
+;circ_shift_FV_loop:
+;	ADDL		XAR4, ACC
+;	MOV32		R1H, *XAR4		;load r1 = iv[i+shift]
+;	SWAPF		R0H, R1H		;swap(r0,r1)
+;	MOV32		*XAR4, R1H		;save iv[i+shift] = r0
+;	BANZ		circ_shift_FV_loop, AR5--
+;
+;	LRETR
+
+
 
 
 
